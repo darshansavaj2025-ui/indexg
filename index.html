@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Retro Dodger</title>
+<style>
+body{margin:0;overflow:hidden;background:#111;color:#0f0;font-family:monospace}
+canvas{display:block;background:#000}
+#score{position:absolute;top:10px;left:10px;font-size:24px}
+</style>
+</head>
+<body>
+<div id="score">Score: 0</div>
+<canvas id="game"></canvas>
+
+<script>
+const c=document.getElementById("game"),x=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;
+
+let p={x:200,y:c.height-60,w:40,h:40,s:7},obs=[],score=0,keys={};
+
+onkeydown=e=>keys[e.key]=1;
+onkeyup=e=>keys[e.key]=0;
+
+setInterval(()=>obs.push({x:Math.random()*c.width,y:-20,w:30,h:30,s:3+Math.random()*4}),500);
+
+function loop(){
+x.clearRect(0,0,c.width,c.height);
+
+if(keys.ArrowLeft)p.x-=p.s;
+if(keys.ArrowRight)p.x+=p.s;
+
+x.fillStyle="#0f0";
+x.fillRect(p.x,p.y,p.w,p.h);
+
+for(let o of obs){
+o.y+=o.s;
+x.fillStyle="#f00";
+x.fillRect(o.x,o.y,o.w,o.h);
+
+if(p.x<o.x+o.w&&p.x+p.w>o.x&&p.y<o.y+o.h&&p.y+p.h>o.y){
+alert("Game Over! Score: "+score);
+location.reload();
+}
+}
+
+obs=obs.filter(o=>o.y<c.height);
+score++;
+document.getElementById("score").innerText="Score: "+score;
+
+requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
